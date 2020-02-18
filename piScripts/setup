@@ -1,0 +1,61 @@
+#!/bin/bash
+#Script to setup rpi wireless hotspot and install required packages
+#must be run with sudo
+
+apt -y update
+apt -y upgrade
+
+apt -y install dnsmasq hostapd
+apt -y install build-essential git libopencv-dev
+curl -sL https://deb.nodesource.com/setup_12.x | bash -
+apt -y install nodejs
+
+echo "Required packages installed"
+
+systemctl stop dnsmasq
+systemctl stop hostapd
+
+cat >> /etc/dhcpcd.conf <<- EOM
+interface wlan0
+    static ip_address=192.168.4.1/24
+    nohook wpa_supplicant
+EOM
+
+service dhcpcd restart
+
+mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+ap
+cat >> /etc/dnsmasq.conf <<- EOM
+interface=wlan0
+dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+EOM
+
+systemctl start dnsmasq
+
+cat >> /etc/hostapd/hostapd.conf <<- EOM
+interface=wlan0
+driver=nl80211
+ssid=roombot
+hw_mode=g
+channel=7
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=dietcoke
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+EOM
+
+echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" >> /etc/default/hostapd
+
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+sudo systemctl start hostapd
+
+echo "Wireless setup comlete"
+
+reboot
+
