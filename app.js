@@ -41,9 +41,7 @@ let server = http.createServer(function(req,res) {
         if (err) {
             console.log(err);
             res.writeHead(404, {'Content-Type': `text/html`});
-            res.write(fs.readFileSync('header.html'));
             res.write(`<h1>404</h1><h2>${path} does not exist</h2>`);
-            res.write(fs.readFileSync('footer.html'));
         } else {
             processFile(path, ext, res);
         }
