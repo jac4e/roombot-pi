@@ -1,19 +1,15 @@
 const five = require("johnny-five");
 const Raspi = require("raspi-io").RaspiIO;
-const board = new five.Board({
-    io: new Raspi()
-});
 
 class boardModule {
     constructor() {
         this.board = new five.Board({
             io: new Raspi()
         });
-        this.board.on('ready', this.ready);
-    }
-    ready() {
-        this.board.repl.inject({
-            sendCommand: this.sendCommand,
+        this.board.on('ready', () =>{
+            this.repl.inject({
+                sendCommand: this.sendCommand,
+            });
         });
     }
     processMsg(data1, data2) {

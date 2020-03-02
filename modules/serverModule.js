@@ -18,7 +18,7 @@ class serverModule {
                 root: `./roombot-pi/public/`
             });
         });
-        this.app.listen(this.port, () => console.log(`Web app started on port ${this.port}`));
+        this.app.listen(this.port);
     }
 }
 
