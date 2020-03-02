@@ -6,10 +6,8 @@ class boardModule {
         this.board = new five.Board({
             io: new Raspi()
         });
-        this.board.on('ready', () =>{
-            this.repl.inject({
-                sendCommand: this.sendCommand,
-            });
+        this.board.on('ready', () => {
+            console.log('Board is Ready\n')
         });
     }
     processMsg(data1, data2) {
