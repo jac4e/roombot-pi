@@ -57,5 +57,10 @@ sudo systemctl start hostapd
 
 echo "Wireless setup comlete"
 
+git clone https://github.com/jaclegonetwork/roombot-pi
+
+cd roombot-pi
+npm i 
+
 reboot
 
