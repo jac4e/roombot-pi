@@ -1,11 +1,8 @@
-import * as cv from ''
-// let onoff = require('onoff'); for control of raspberry pi gpio pins
-// let i2c = require('i2c-bus'); i2c-bus access for communication with arduino
+const serverModule = require('./modules/serverModule');
+const boardModule = require('./modules/boardModule');
+const visionModule = require('./modules/visionModule');
 
-
-fucntion myFunc(in1,in2){
-    return true
-}
-
-
-if (myFunc(int1,int2))
+const server = serverModule(8080);
+const rpi = boardModule();
+rpi.sendCommand(0x01,10)
+server.init();
