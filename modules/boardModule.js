@@ -40,6 +40,9 @@ class boardModule {
             case 'turnRight':
                 msg = this.processMsg(0x04, data);
                 break;
+            case 'stop':
+                msg = this.processMsg(0x05, data);
+                break;
             default:
                 throw 'Error: Not a valid command';
         }
