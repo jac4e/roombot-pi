@@ -29,10 +29,10 @@ function buttonLoop() {
 }
 
 if (navigator.getGamepads().length) {
-    buttonint = window.setInterval(buttonLoop, 10);
+    buttonint = window.setInterval(buttonLoop, 1000);
 }
 window.addEventListener("gamepadconnected", () => {
-    buttonint = window.setInterval(buttonLoop, 10);
+    buttonint = window.setInterval(buttonLoop, 1000);
 });
 window.addEventListener("gamepaddisconnected", () => {
     clearInterval(buttonint)
