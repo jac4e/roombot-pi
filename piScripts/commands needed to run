@@ -1,0 +1,68 @@
+sudo apt-get update
+sudo apt-get dist-upgrade
+sudo apt install dnsmasq hostapd
+sudo systemctl stop dnsmasq
+sudo systemctl stop hostapd
+
+sudo nano /etc/dhcpcd.conf
+
+add this to bottom:
+interface wlan0
+    static ip_address=192.168.4.1/24
+    nohook wpa_supplicant
+
+sudo service dhcpcd restart
+
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+sudo nano /etc/dnsmasq.conf
+
+add this to the new file:
+interface=wlan0      # Use the require wireless interface - usually wlan0
+dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+
+sudo systemctl start dnsmasq
+
+sudo nano /etc/hostapd/hostapd.conf
+
+add this:
+interface=wlan0
+driver=nl80211
+ssid=roombot
+hw_mode=g
+channel=7
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=dietcoke
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+
+sudo nano /etc/default/hostapd
+
+replace #DAEMON_CONF with:
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+wireless ap setup complete
+starting node.js and npm install
+
+enable nodejs apt repository
+curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+sudo apt install nodejs
+
+install git
+sudo apt-get install git
+
+download git repository
+git clone https://github.com/jaclegonetwork/roombot-pi
+
+user: jaclegonetwork
+pass: =NqEH~c4%ipeBnG8DRA!
+
+cd roombot-pi
+
+install open cv depedancies
+apt install build-essential git libopencv-dev # and other libs you need
+sudo apt-get install libudev-dev libusb-1.0-0 libusb-1.0-0-dev build-essential git
