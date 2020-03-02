@@ -6,6 +6,10 @@ let up;
 let down;
 let left;
 let right;
+let upEmit;
+let downEmit;
+let leftEmit;
+let rightEmit;
 
 function updateGamepad() {
     gamepads = navigator.getGamepads();
@@ -18,35 +22,53 @@ function updateGamepad() {
 
 function buttonLoop() {
     updateGamepad()
-    if (up.pressed) {
+    if (up.pressed & !upEmit) {
         console.log('up');
         socket.emit('moveForward')
+        upEmit = true;
         return;
+    } else if (!up.pressed & upEmit) {
+        upEmit = false;
+        console.log('stop');
+        socket.emit('stop');
     }
-    if (down.pressed) {
+    if (down.pressed & !downEmit) {
         console.log('down');
         socket.emit('moveBackward')
+        downEmit = true;
         return;
+    } else if (!down.pressed & downEmit) {
+        downEmit = false;
+        console.log('stop');
+        socket.emit('stop');
     }
-    if (left.pressed) {
+    if (left.pressed & !leftEmit) {
         console.log('left');
         socket.emit('turnLeft')
+        leftEmit = true;
         return;
+    } else if (!left.pressed & leftEmit) {
+        leftEmit = false;
+        console.log('stop');
+        socket.emit('stop');
     }
-    if (down.pressed) {
+    if (right.pressed & !rightEmit) {
         console.log('right');
         socket.emit('turnRight')
+        rightEmit = true;
         return;
+    } else if (!right.pressed & rightEmit) {
+        rightEmit = false;
+        console.log('stop');
+        socket.emit('stop');
     }
-    console.log('stop');
-    socket.emit('stop')
 }
 
 if (navigator.getGamepads().length) {
-    buttonint = window.setInterval(buttonLoop, 500);
+    buttonint = window.setInterval(buttonLoop, 10);
 }
 window.addEventListener("gamepadconnected", () => {
-    buttonint = window.setInterval(buttonLoop, 500);
+    buttonint = window.setInterval(buttonLoop, 10);
 });
 window.addEventListener("gamepaddisconnected", () => {
     clearInterval(buttonint)
