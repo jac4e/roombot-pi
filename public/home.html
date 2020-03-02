@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="/js/page.js"></script>
 
   <title>Roombot | Home</title>
@@ -20,10 +21,8 @@
   <main role="main" class="container">
 
     <div class="jumbotron">
-      <h1>Navbar example</h1>
-      <p class="lead">This example is a quick exercise to illustrate how fixed to top navbar works. As you scroll, it
-        will remain fixed to the top of your browser’s viewport.</p>
-      <a class="btn btn-lg btn-primary" href="/docs/4.4/components/navbar/" role="button">View navbar docs »</a>
+      <h1>Navigation</h1>
+      <a class="btn btn-lg btn-primary" onclick="socket.emit('moveForward');">Move Forward</a>
     </div>
   </main>
 </body>

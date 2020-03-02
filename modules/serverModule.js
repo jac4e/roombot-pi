@@ -1,24 +1,33 @@
 const express = require('express');
-
+const http = require('http');
+const app = express();
+const server = app.listen(3030);
+const io = require('socket.io')(server);
 
 class serverModule {
     constructor(port) {
-        this.app = express();
+        this.httpServer = http.createServer(this.app);
         this.port = port;
     }
     init() {
         console.log(__dirname);
-        this.app.get('/', (req, res) => {
+        app.get('/', (req, res) => {
             res.sendFile('home.html', {
                 root: `./roombot-pi/public/`
             });
         });
-        this.app.use((req, res) => {
+        app.use((req, res) => {
             res.sendFile(req.path, {
                 root: `./roombot-pi/public/`
             });
         });
-        this.app.listen(this.port);
+        this.httpServer.listen(this.port);
+    }
+    createSocket(listner, func){
+        // socket stuff
+        io.on('connection', (socket) => {
+            socket.on(listner, func);
+        })
     }
 }
 
