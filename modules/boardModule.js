@@ -35,16 +35,16 @@ class boardModule {
         //05      queryGyro      none
         switch (command) {
             case 'moveForward':
-                msg = processMsg(0x01, data);
+                msg = this.processMsg(0x01, data);
                 break;
             case 'moveBackward':
-                msg = processMsg(0x02, data);
+                msg = this.processMsg(0x02, data);
                 break;
             case 'turnLeft':
-                msg = processMsg(0x03, data);
+                msg = this.processMsg(0x03, data);
                 break;
             case 'turnRight':
-                msg = processMsg(0x04, data);
+                msg = this.processMsg(0x04, data);
                 break;
             default:
                 throw 'Error: Not a valid command';
