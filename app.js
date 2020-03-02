@@ -4,5 +4,5 @@ const visionModule = require('./modules/visionModule');
 
 const server = serverModule(8080);
 const rpi = boardModule();
-rpi.sendCommand(0x01,10)
+rpi.sendCommand('moveForward',10);
 server.init();

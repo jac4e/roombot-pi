@@ -9,11 +9,11 @@ class boardModule {
         this.board = new five.Board({
             io: new Raspi()
         });
-        this.board.on('ready', ready());
+        this.board.on('ready', this.ready);
     }
     ready() {
         this.board.repl.inject({
-            sendCommand: sendCommand,
+            sendCommand: this.sendCommand,
         });
     }
     processMsg(data1, data2) {
