@@ -21,18 +21,32 @@ function buttonLoop() {
     if (up.pressed) {
         console.log('up');
         socket.emit('moveForward')
+        return;
     }
     if (down.pressed) {
         console.log('down');
         socket.emit('moveBackward')
+        return;
     }
+    if (left.pressed) {
+        console.log('left');
+        socket.emit('turnLeft')
+        return;
+    }
+    if (down.pressed) {
+        console.log('right');
+        socket.emit('turnRight')
+        return;
+    }
+    console.log('stop');
+    socket.emit('stop')
 }
 
 if (navigator.getGamepads().length) {
-    buttonint = window.setInterval(buttonLoop, 1000);
+    buttonint = window.setInterval(buttonLoop, 500);
 }
 window.addEventListener("gamepadconnected", () => {
-    buttonint = window.setInterval(buttonLoop, 1000);
+    buttonint = window.setInterval(buttonLoop, 500);
 });
 window.addEventListener("gamepaddisconnected", () => {
     clearInterval(buttonint)
