@@ -17,7 +17,7 @@ class boardModule {
         byte[1] = data2;
         return byte;
     }
-    sendCommand(command, data) {
+    sendCmd(command, data) {
         // prepares message from command and data, then writes to specified i2c device
         let msg;
         //command list
@@ -51,6 +51,8 @@ class boardModule {
 
     }
 }
+
+// Possible make class or subclass for communication, motor controls, and sensors
 
 function create() {
     return new boardModule();
