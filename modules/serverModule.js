@@ -40,6 +40,8 @@ class serverModule {
     }
 }
 
+// Add possible map view with location robot belives it is at.
+
 function create(port) {
     return new serverModule(port);
 }
