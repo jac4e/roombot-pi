@@ -6,29 +6,29 @@ const server = serverModule();
 const rpi = boardModule();
 server.init();
 server.createSocket('moveForward', () => {
-    rpi.sendCommand('moveForward');
+    rpi.moveCmd('moveForward');
     console.log('moveForward');
 });
 server.createSocket('moveBackward', () => {
-    rpi.sendCommand('moveBackward');
+    rpi.moveCmd('moveBackward');
     console.log('moveBackward');
 });
 server.createSocket('turnLeft', () => {
-    rpi.sendCommand('turnLeft');
+    rpi.moveCmd('turnLeft');
     console.log('turnLeft');
 });
 server.createSocket('turnRight', () => {
-    rpi.sendCommand('turnRight');
+    rpi.moveCmd('turnRight');
     console.log('turnRight');
 });
 server.createSocket('stop', () => {
-    rpi.sendCommand('stop');
+    rpi.moveCmd('stop');
     console.log('stop');
 });
 
 const test = visionModule();
-const fps = 4;
-server.initStream(4);
+const fps = 30;
+server.initS30tream(2);
 setInterval(() => {
     server.stream(test.camView());
 }, 1000 / fps);
