@@ -1,4 +1,5 @@
-let socket = io();
+const socket = io();
+const container = document.querySelector('#stream-container');
 let buttonint;
 let gamepads;
 let gamepad;
@@ -24,7 +25,7 @@ function buttonLoop() {
     updateGamepad()
     if (up.pressed & !upEmit) {
         console.log('up');
-        socket.emit('moveForward')
+        socket.emit('moveForward');
         upEmit = true;
         return;
     } else if (!up.pressed & upEmit) {
@@ -34,7 +35,7 @@ function buttonLoop() {
     }
     if (down.pressed & !downEmit) {
         console.log('down');
-        socket.emit('moveBackward')
+        socket.emit('moveBackward');
         downEmit = true;
         return;
     } else if (!down.pressed & downEmit) {
@@ -44,7 +45,7 @@ function buttonLoop() {
     }
     if (left.pressed & !leftEmit) {
         console.log('left');
-        socket.emit('turnLeft')
+        socket.emit('turnLeft');
         leftEmit = true;
         return;
     } else if (!left.pressed & leftEmit) {
@@ -54,7 +55,7 @@ function buttonLoop() {
     }
     if (right.pressed & !rightEmit) {
         console.log('right');
-        socket.emit('turnRight')
+        socket.emit('turnRight');
         rightEmit = true;
         return;
     } else if (!right.pressed & rightEmit) {
@@ -64,12 +65,23 @@ function buttonLoop() {
     }
 }
 
-if (navigator.getGamepads().length) {
-    buttonint = window.setInterval(buttonLoop, 10);
-}
 window.addEventListener("gamepadconnected", () => {
     buttonint = window.setInterval(buttonLoop, 10);
 });
 window.addEventListener("gamepaddisconnected", () => {
-    clearInterval(buttonint)
+    clearInterval(buttonint);
+});
+
+
+socket.on('incomingStreams', (streams) => {
+    console.log(`Server is sending ${streams.amt} streams`)
+    for (let i = 0; i< streams.amt; i++){
+        console.log(i);
+        // console.log(`Server is sending ${streams.amt} streams`)
+        let streamView = document.createRange().createContextualFragment(`<img class="stream" id='stream${i}' src="">`);
+        container.appendChild(streamView);
+        socket.on(`stream${i}`, (stream) => {
+            document.querySelector(`#stream${i}`).src = `data:image/jpeg;base64,${stream.frame}`;
+        });
+    }
 });

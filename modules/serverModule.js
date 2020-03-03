@@ -10,7 +10,6 @@ class serverModule {
         this.port = port;
     }
     init() {
-        console.log(__dirname);
         app.get('/', (req, res) => {
             res.sendFile('home.html', {
                 root: `./roombot-pi/public/`
@@ -27,7 +26,17 @@ class serverModule {
         // socket stuff
         io.on('connection', (socket) => {
             socket.on(listner, func);
-        })
+        });
+    }
+    initStream(num){
+        io.on('connection', (socket) => {
+            socket.emit('incomingStreams', { amt: num})
+        });
+    }
+    stream(imgArray) {
+        for (let i = 0; i < imgArray.length; i++){
+            io.emit(`stream${i}`, { frame: imgArray[i] })
+        }
     }
 }
 
