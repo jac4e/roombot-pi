@@ -107,3 +107,6 @@ dist
 .DS_Store
 roombot-pi.code-workspace
 .vscode/launch.json
+.gitignore
+/node_modules/
+piBackup02-03-2020.dmg

@@ -13,7 +13,7 @@ class visionModule {
         return this.process(img);
     }
     process(img) {
-        let frame = img;
+        let frame = img.resize(640,360);
         const low1 = new cv.Vec3(0, 0, 120);
         const up1 = new cv.Vec3(180, 20, 255);
         const low2 = new cv.Vec3(140, 46, 6);
