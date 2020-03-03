@@ -24,11 +24,12 @@ class visionModule {
         // const mask1 = frame.inRange(low1, up1);
         // const mask2 = frame.inRange(low2,up2);
         // frame = mask1.or(mask2);
-        // frame = frame.threshold(, 255, cv.THRESH_BINARY);
-        frame = frame.cvtColor(cv.COLOR_BGR2GRAY);
-        let frameBlur = frame.gaussianBlur(new cv.Size(9,9),3);
-        frame = frameBlur.canny(0,120);
-        return [cv.imencode('.jpg', frame).toString('base64'), cv.imencode('.jpg', frameBlur).toString('base64')];
+        const gray = frame.cvtColor(cv.COLOR_BGR2GRAY);
+        const gauss = gray.gaussianBlur(new cv.Size(9,9),2);
+        const test = gauss.threshold(200,255, cv.THRESH_BINARY+cv.THRESH_OTSU);
+        const canny = gauss.canny(0,100);
+        frame = canny;
+        return [cv.imencode('.jpg', frame).toString('base64'),cv.imencode('.jpg', test).toString('base64')];
     }
     getBounderies() {
         // How image processing should hopefully work

@@ -27,8 +27,8 @@ server.createSocket('stop', () => {
 });
 
 const test = visionModule();
-const fps = 30;
-server.initStream(4);
+const fps = 15;
+server.initStream(2);
 setInterval(() => {
-    server.stream(test.mapView().concat(test.camView()));
+    server.stream(test.camView());
 }, 1000 / fps);
