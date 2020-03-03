@@ -20,14 +20,19 @@ class visionModule {
         const up2 = new cv.Vec3(170, 255, 255);
 
         frame = frame.cvtColor(cv.COLOR_BGR2HSV);
-        const mask1 = frame.inRange(low1,up1);
+        const mask1 = frame.inRange(low1, up1);
         //const mask2 = frame.inRange(low2,up2);
-        frame = mask1//.or(mask2);
+        frame = mask1 //.or(mask2);
         //frame = frame.blur(new cv.Size(10, 10));
         //frame = frame.threshold(200, 255, cv.THRESH_BINARY);
         return [cv.imencode('.jpg', frame).toString('base64'), cv.imencode('.jpg', img).toString('base64')];
     }
+    getBounderies() {
+        // How image processing should hopefully work
+        // Colour mask floor, use canny edge detector and hough line transforms to detect boundries
+    }
 }
+// Use dected booundries and previous position, gyro and acceleromator to track itself within the boundries
 
 function create() {
     return new visionModule();
