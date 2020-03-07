@@ -3,37 +3,45 @@ const cv = require('opencv4nodejs');
 class visionModule {
     constructor() {
         this.camera = new cv.VideoCapture(0);
+        this.prevFrame;
     }
-    camView() {
-        let img = this.camera.read();
-        return this.process(img);
+    cameraRead() {
+        return this.camera.read();
     }
-    mapView() {
-        let img = cv.imread(`${__dirname}/colourmap.png`);
-        return this.process(img);
-    }
-    process(img) {
-        let frame = img.resize(360,640);
-        // const low1 = new cv.Vec3(90, 19, 223);
-        // const up1 = new cv.Vec3(108, 88, 253);
-        // const low2 = new cv.Vec3(95, 12, 120);
-        // const up2 = new cv.Vec3(115, 30, 180);
-
-        // frame = frame.blur(new cv.Size(10, 10));
-        // frame = frame.cvtColor(cv.COLOR_BGR2HSV);
-        // const mask1 = frame.inRange(low1, up1);
-        // const mask2 = frame.inRange(low2,up2);
-        // frame = mask1.or(mask2);
-        const gray = frame.cvtColor(cv.COLOR_BGR2GRAY);
-        const gauss = gray.gaussianBlur(new cv.Size(9,9),2);
-        const test = gauss.threshold(200,255, cv.THRESH_BINARY+cv.THRESH_OTSU);
-        const canny = gauss.canny(0,100);
-        frame = canny;
-        return [cv.imencode('.jpg', frame).toString('base64'),cv.imencode('.jpg', test).toString('base64')];
-    }
-    getBounderies() {
-        // How image processing should hopefully work
-        // Colour mask floor, use canny edge detector and hough line transforms to detect boundries
+    matchFeature(newFrame) {
+        if (this.prevFrame) {
+            const curr = newFrame.resize(360,640);
+            const prev = this.prevFrame;
+            const orb = new cv.ORBDetector();
+            const kpC = orb.detect(curr);
+            const kpP = orb.detect(this.prevFrame);
+            const descC = orb.compute(curr, kpC).convertTo(cv.CV_32F);
+            const descP = orb.compute(prev, kpP).convertTo(cv.CV_32F);
+            const matches = cv.matchKnnFlannBased(descP,descC,2);
+            let good = new Array();
+            for (let m = 0; m<matches.length; m++){
+                if (matches[m][0].distance < 0.7*matches[m][1].distance) {
+                    good.push(matches[m][0]);
+                }
+            }
+            // let ptsCurr = new Array();
+            // let ptsPrev = new Array();
+            for (let mat of good) {
+                const currIdx = mat.trainIdx;
+                const prevIdx = mat.queryIdx;
+                const dx = kpC[currIdx].pt.x - kpP[prevIdx].pt.x;
+                const dy = kpC[currIdx].pt.y - kpP[prevIdx].pt.y;
+                console.log(dx,dy);
+                // ptsCurr.push(kpC[currIdx].point);
+                // ptsPrev.push(kpP[prevIdx].point);
+            }
+            const draw = cv.drawMatches(prev,curr,kpP,kpC,good);
+            this.prevFrame = curr;
+            return [cv.imencode('.jpg', draw).toString('base64')];
+        } else {
+            this.prevFrame = newFrame.resize(360,640);
+            return [0];
+        }
     }
 }
 // Use dected booundries and previous position, gyro and acceleromator to track itself within the boundries
@@ -42,17 +50,10 @@ function create() {
     return new visionModule();
 }
 
-module.exports = create
-// RGB
-// 210,253,253
-// 175,212,251
-// 229,244,247
-// 146,177,223
-// HSV(need to h / 2 s and v /100 * 255)
-// 90,43,99.2
-// 105,77,98.4
-// 95,19,96.9
-// 108,88,87.5
+module.exports = create;
+
+// Most logical idea:
+// Up facing camere that uses optical flow to 
 
 
 

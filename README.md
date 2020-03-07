@@ -13,3 +13,14 @@ johnny-five
 express
 socket.io
 raspi-io
+
+## Todo
+
+- Finish boardModule updateAccel fucntion
+  - Must be able to read all 3 accel values from sensor and update global varible for acceleration them best course is to have an ax, ay , az function
+- Finish boardModule updateGyro function
+  - Must be able to read 3 gyro axes from sensor and return using same theory as readAccel
+- Change IMU init options for 100HZ
+- Create trackingModule position tracking system based off of <https://arxiv.org/pdf/1704.06053.pdf>
+  - Adopt the ros sytem using rosnodejs
+  - implement sytem using <https://github.com/HKUST-Aerial-Robotics/VINS-Mono>

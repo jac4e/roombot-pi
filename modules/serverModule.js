@@ -30,12 +30,12 @@ class serverModule {
     }
     initStream(num){
         io.on('connection', (socket) => {
-            socket.emit('incomingStreams', { amt: num})
+            socket.emit('incomingStreams', { amt: num});
         });
     }
     stream(imgArray) {
         for (let i = 0; i < imgArray.length; i++){
-            io.emit(`stream${i}`, { frame: imgArray[i] })
+            io.emit(`stream${i}`, { frame: imgArray[i] });
         }
     }
 }

@@ -1,5 +1,23 @@
 const five = require("johnny-five");
 const Raspi = require("raspi-io").RaspiIO;
+// Define slave and registry addresses for acceleration sensor
+const LS303D = {
+    ADDR: 0x1D,
+    CTRL1: 0x20,
+    XL: 0x28,
+    XH: 0x29,
+    YL: 0x2A,
+    YH: 0x2B
+}
+// Define slave and registry addresses for gyroscope sensor
+const L3GD20H = {
+    ADDR: 0x6B,
+    CTRL1: 0x20,
+    XL: 0x28,
+    XH: 0x29,
+    YL: 0x2A,
+    YH: 0x2B
+}
 
 class boardModule {
     constructor() {
@@ -7,7 +25,11 @@ class boardModule {
             io: new Raspi()
         });
         this.board.on('ready', () => {
+            initSensors()
             console.log('Board is Ready\n');
+            this.board.repl.inject({
+                // calibrate: this.calibrate
+            });
         });
     }
     processMsg(data1, data2) {
@@ -28,6 +50,7 @@ class boardModule {
         //04      turnLeft       0<deg<180
         //05      queryGyro      none
         switch (command) {
+            // add setSpeed case?
             case 'moveForward':
                 msg = this.processMsg(0x01, data);
                 break;
@@ -49,43 +72,28 @@ class boardModule {
 
         this.board.io.i2cWrite(0x2A, msg);
     }
-
-    // Test interfacing with gyroscope and acceleromator
-    // Accel slave address is 0x1d
-    // script below is from lsm303 pololu
-    //     void LSM303::readAcc(void)
-    // {
-    //   Wire.beginTransmission(acc_address);
-    //   // assert the MSB of the address to get the accelerometer
-    //   // to do slave-transmit subaddress updating.
-    //   Wire.write(OUT_X_L_A | (1 << 7));
-    //   last_status = Wire.endTransmission();
-    //   Wire.requestFrom(acc_address, (byte)6);
-
-    //   unsigned int millis_start = millis();
-    //   while (Wire.available() < 6) {
-    //     if (io_timeout > 0 && ((unsigned int)millis() - millis_start) > io_timeout)
-    //     {
-    //       did_timeout = true;
-    //       return;
-    //     }
-    //   }
-
-    //   byte xla = Wire.read();
-    //   byte xha = Wire.read();
-    //   byte yla = Wire.read();
-    //   byte yha = Wire.read();
-    //   byte zla = Wire.read();
-    //   byte zha = Wire.read();
-
-    //   // combine high and low bytes
-    //   // This no longer drops the lowest 4 bits of the readings from the DLH/DLM/DLHC, which are always 0
-    //   // (12-bit resolution, left-aligned). The D has 16-bit resolution
-    //   a.x = (int16_t)(xha << 8 | xla);
-    //   a.y = (int16_t)(yha << 8 | yla);
-    //   a.z = (int16_t)(zha << 8 | zla);
-    // }
-
+    initSensors() {
+        this.board.io.i2cWrite(LS303D.ADDR, LS303D.CTRL1, 0x57); // write 0110 0111 to LS303D CTRL1 registry
+        this.board.io.i2cWrite(L3GD20H.ADDR, L3GD20H.CTRL1, 0x0f); // write 0000 1111 to L3GD20H CTRL1 registry
+    }
+    readAccel(coord,handler) {
+        board.io.i2cReadOnce(LS303D.ADDR, LS303D.XL, 1, (L) => {
+            board.io.i2cReadOnce(LS303D.ADDR, LS303D.XH, 1, (H)=> {
+                const uA = (H[0] << 8) | (L[0]); //create 16bit twos-complement
+                A = new Int16Array([uAX]); //convert to singed Int16
+                handler(A[0]);
+            });
+        });
+    }
+    readGyro(coord,handler) {
+        board.io.i2cReadOnce(L3GD20H.ADDR, L3GD20H.XL, 1, (L) => {
+            board.io.i2cReadOnce(L3GD20H.ADDR, L3GD20H.XH, 1, (H)=> {
+                const uA = (H[0] << 8) | (L[0]); //create 16bit twos-complement
+                A = new Int16Array([uAX]); //convert to singed Int16
+                handler(A[0]);
+            });
+        });
+    }
 }
 // Possible make class or subclass for communication, motor controls, and sensors
 
