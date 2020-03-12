@@ -7,7 +7,9 @@ const LS303D = {
     XL: 0x28,
     XH: 0x29,
     YL: 0x2A,
-    YH: 0x2B
+    YH: 0x2B,
+    ZL: 0x2C,
+    ZH: 0x2D
 }
 // Define slave and registry addresses for gyroscope sensor
 const L3GD20H = {
@@ -16,21 +18,17 @@ const L3GD20H = {
     XL: 0x28,
     XH: 0x29,
     YL: 0x2A,
-    YH: 0x2B
+    YH: 0x2B,
+    ZL: 0x2C,
+    ZH: 0x2D
 }
 
 class boardModule {
-    constructor() {
+    constructor(handler) {
         this.board = new five.Board({
             io: new Raspi()
         });
-        this.board.on('ready', () => {
-            initSensors()
-            console.log('Board is Ready\n');
-            this.board.repl.inject({
-                // calibrate: this.calibrate
-            });
-        });
+        this.board.on('ready', handler);
     }
     processMsg(data1, data2) {
         // returns byte array from two inputs
@@ -71,34 +69,35 @@ class boardModule {
         }
 
         this.board.io.i2cWrite(0x2A, msg);
+
     }
     initSensors() {
         this.board.io.i2cWrite(LS303D.ADDR, LS303D.CTRL1, 0x57); // write 0110 0111 to LS303D CTRL1 registry
         this.board.io.i2cWrite(L3GD20H.ADDR, L3GD20H.CTRL1, 0x0f); // write 0000 1111 to L3GD20H CTRL1 registry
     }
     readAccel(coord,handler) {
-        board.io.i2cReadOnce(LS303D.ADDR, LS303D.XL, 1, (L) => {
-            board.io.i2cReadOnce(LS303D.ADDR, LS303D.XH, 1, (H)=> {
+        this.board.io.i2cReadOnce(LS303D.ADDR, LS303D[`${coord}L`], 1, (L) => {
+            this.board.io.i2cReadOnce(LS303D.ADDR, LS303D[`${coord}H`], 1, (H)=> {
                 const uA = (H[0] << 8) | (L[0]); //create 16bit twos-complement
-                A = new Int16Array([uAX]); //convert to singed Int16
+                const A = new Int16Array([uA]); //convert to singed Int16
                 handler(A[0]);
             });
         });
     }
     readGyro(coord,handler) {
-        board.io.i2cReadOnce(L3GD20H.ADDR, L3GD20H.XL, 1, (L) => {
-            board.io.i2cReadOnce(L3GD20H.ADDR, L3GD20H.XH, 1, (H)=> {
-                const uA = (H[0] << 8) | (L[0]); //create 16bit twos-complement
-                A = new Int16Array([uAX]); //convert to singed Int16
-                handler(A[0]);
+        this.board.io.i2cReadOnce(L3GD20H.ADDR, L3GD20H[`${coord}L`], 1, (L) => {
+            this.board.io.i2cReadOnce(L3GD20H.ADDR, L3GD20H[`${coord}H`], 1, (H)=> {
+                const uG = (H[0] << 8) | (L[0]); //create 16bit twos-complement
+                const G = new Int16Array([uG]); //convert to singed Int16
+                handler(G[0]);
             });
         });
     }
 }
 // Possible make class or subclass for communication, motor controls, and sensors
 
-function create() {
-    return new boardModule();
+function create(handler) {
+    return new boardModule(handler);
 }
 
 module.exports = create
