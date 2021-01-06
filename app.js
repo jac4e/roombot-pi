@@ -2,6 +2,7 @@ const serverModule = require('./modules/serverModule');
 const visionModule = require('./modules/visionModule');
 const os = require('os');
 let arm64;
+let rpi;
 // Enable/disable boardModule based on architecture
 if (os.arch() == 'arm64') {
     const boardModule = require('./modules/boardModule');
@@ -9,7 +10,6 @@ if (os.arch() == 'arm64') {
     arm64 = true;
 } else {
     arm64 = false;
-    console.log('test');
 }
 
 // Initialize webserver
@@ -18,7 +18,7 @@ server.init();
 
 // Vision system
 const vision = visionModule();
-const fps = 5;
+const fps = 20;
 server.initStream(1);
 setInterval((err) => {
     server.stream(vision.matchFeature(vision.cameraRead()));
@@ -26,7 +26,7 @@ setInterval((err) => {
 
 // Raspberry pi specific code:
 //   sensor update
-//   webapp control initializeation
+//   webapp control initialization
 if (arm64) {
     let accelData = [0, 0, 0];
     let gyroData = [0, 0, 0];

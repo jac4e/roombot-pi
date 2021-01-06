@@ -6,7 +6,7 @@ const io = require('socket.io')(server);
 
 class serverModule {
     constructor(port) {
-        this.httpServer = http.createServer(this.app);
+        this.httpServer = http.createServer(app);
         this.port = port;
     }
     init() {
