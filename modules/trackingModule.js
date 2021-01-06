@@ -43,7 +43,7 @@ class Filter {
     }
 }
 
-// change state trasnistion and contorl matrix per robot state:
+// change state transition and control matrix per robot state:
 //  robot states: moving, stopped, turning
 
 
@@ -80,7 +80,7 @@ const t = Date.now();
 for (let i = 0; i<u_t.columns; i++){
     const accel = u_t.getColumn(i)[0]
     const input = new Matrix([[accel],[-accel]]);
-    const m = new Matrix([[ 0 , 0 ]] ); // observed chanege in position
+    const m = new Matrix([[ 0 , 0 ]] ); // observed change in position
     console.log(kalman.update(input,m,A,B,C));
 }
 console.log(Date.now()-t);
@@ -91,13 +91,7 @@ for (output of kalman.state){
 storeData(data);
 }
 test();
-function create(dt) {
-    const L = (new Matrix([
-        [(dt ^ 4) / 4, (dt ^ 3) / 2, (dt ^ 2), dt],
-        [(dt ^ 3) / 2, (dt ^ 2), dt, 0],
-        [(dt ^ 2), dt, 0, 0],
-        [dt, 0, 0, 0]
-    ])).mul(0.0312 ^ 2);
+function create(dt, L) {
 
     return new FilterNew(L, 0.01 ^ 2);
 }

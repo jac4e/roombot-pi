@@ -26,7 +26,9 @@ const L3GD20H = {
 class boardModule {
     constructor(handler) {
         this.board = new five.Board({
-            io: new Raspi()
+            io: new Raspi(),
+            repl: false,
+            debug: false,
         });
         this.board.on('ready', handler);
     }
