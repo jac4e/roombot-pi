@@ -6,6 +6,6 @@
         "johnny-five": "^1.4.0",
         "ml-matrix": "^6.4.1",
         "opencv4nodejs": "^5.5.0",
-        "socket.io": "^2.3.0"
+        "socket.io": "^2.5.0"
     }
 }
